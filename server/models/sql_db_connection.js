@@ -2,16 +2,16 @@ import mysql from "mysql";
 
 const query_db = (query_string, callback) => {
   const connection = mysql.createConnection({
-    host: "",
-    port: "",
-    user: "",
-    password: "",
-    database: "",
+    host: "localhost",
+    port: "3306",
+    user: "test_user",
+    password: "123",
+    database: "test",
   });
 
   connection.connect((error) => {
     if (error) {
-      return console.log("connection error: ", error.message);
+      return console.log("Connection error: ", error.message);
     }
 
     console.log("DB connection established...");
@@ -25,6 +25,8 @@ const query_db = (query_string, callback) => {
         }
         console.log("DB connection ended.");
       });
+
+      //add result logic here
 
       callback(result);
     });
