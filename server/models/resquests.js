@@ -2,14 +2,30 @@ import query_db from "./sql_db_connection.js";
 
 //CREATE
 export const createRequestModel = (req, callback) => {
-  //request data extraction
-  const arguments_string = concat_arguments(req);
-  const values_string = concat_values(req);
+  
+  /* const FAKE_REQUEST = {
+    table_name: "requests",
+    0: { sql_argument: "content", sql_value: "info" },
+    //1: { sql_argument: "arg2", sql_value: "val2" },
+    //2: { sql_argument: "arg3", sql_value: "val3" },
+  }; */
 
-  console.log("table: ", req.table_name, "| arguments:", arguments_string, "| values:", values_string);
+  //const requestObject = FAKE_REQUEST;
+
+  //Removes [Object: null prototype] prefix
+  const requestObject = JSON.parse( JSON.stringify( req.body ));
+
+  console.log( "req: ", requestObject );
+
+  //request data extraction
+  const {fields:fields_string, values:values_string}  = extractFieldsValues(requestObject);
+
+  console.log( "table: ", requestObject.db_table, "| fields:", fields_string, "| values:", values_string);
 
   //querry composition
-  const sql = `INSERT INTO ${req.table_name} (${arguments_string}) VALUES (${values_string})`;
+  const sql = `INSERT INTO ${requestObject.db_table} (${fields_string}) VALUES (${values_string})`;
+
+  console.log("sql query: ", sql);
 
   query_db(sql, (result) => {
     if (Object.keys(result).length == 0) {
@@ -17,7 +33,12 @@ export const createRequestModel = (req, callback) => {
       return null;
     }
 
-    callback(result);
+    const result_message = "".concat(
+      "Inserted with success with id:",
+      result.insertId
+    );
+
+    callback(result_message);
   });
 };
 
@@ -27,43 +48,28 @@ export const createRequestModel = (req, callback) => {
 
 //DELETE
 
+
 //data extraction methods
-const concat_arguments = (req) => {
-  let extracted_arguments = [];
-  let arguments_string = "";
+const extractFieldsValues = (requests) => {
+  
+  let fields = "", values = "", counter_fields=0, counter_values=0;
 
-  Object.values(req).forEach((entry) => {
-    if (entry.sql_argument) {
-      extracted_arguments.push(entry.sql_argument);
+  Object.entries(requests).forEach( (request) => {
+    if ( request[0].includes("db_field") ) {
+      fields = fields.concat(" ", request[1], "\," );
+      counter_fields++;
+    }else if(request[0].includes("db_value")){
+      values = values.concat(" \'", request[1], "\'\," );
+      counter_values++;
     }
-  });
-  //console.log(extracted_arguments);
-  arguments_string = extracted_arguments.reduce((accumulator, arg) => {
-    return accumulator.concat(" ", arg, ",");
-  }, "");
+  } );
 
-  arguments_string = arguments_string.slice(0, arguments_string.length - 1);
+  counter_fields !== counter_values && console.log("Error: SQL arguments quantities: Feilds quantity doesn't match values quantity!");
 
-  return arguments_string;
-};
-
-const concat_values = (req) => {
-  let extracted_values = [];
-  let values_string = "";
-
-  Object.values(req).forEach((entry) => {
-    if (entry.sql_argument) {
-      extracted_values.push(entry.sql_value);
-    }
-  });
-  //console.log(extracted_values);
-  values_string = extracted_values.reduce((accumulator, value) => {
-    return accumulator.concat(" '", value, " ',");
-  }, "");
-
-  values_string = values_string.slice(0, values_string.length - 1);
-
-  return values_string;
-};
+  fields = fields.slice( 0, fields.length - 1 );
+  values = values.slice( 0, values.length - 1 );
+  
+  return {fields, values};
+}
 
 export default null;

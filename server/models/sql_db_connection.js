@@ -26,8 +26,6 @@ const query_db = (query_string, callback) => {
         console.log("DB connection ended.");
       });
 
-      //add result logic here
-
       callback(result);
     });
 
