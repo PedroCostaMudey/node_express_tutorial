@@ -7,9 +7,9 @@ var urlEncodedParser = express.urlencoded({ extended: false });
 
 const router = express.Router();
 
-router.get('/', readRequest);
-router.post('/',urlEncodedParser, createRequest);
-router.patch('/:id', updateRequest);
-router.delete('/:id', deleteRequest);
+router.post('/POST', urlEncodedParser, createRequest);
+router.post('/GET', urlEncodedParser, readRequest);
+router.post('/UPDATE', urlEncodedParser, updateRequest);
+router.post('/DELETE', urlEncodedParser, deleteRequest);
 
-export default router;
+export default router; 

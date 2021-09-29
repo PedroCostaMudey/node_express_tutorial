@@ -43,11 +43,107 @@ export const createRequestModel = (req, callback) => {
 };
 
 //READ
+export const readRequestModel = (req, callback) => {
+
+  //Removes [Object: null prototype] prefix
+  const requestObject = JSON.parse( JSON.stringify( req.body ));
+
+  console.log( "req: ", requestObject );
+
+  //request data extraction
+  const {fields:fields_string, values:values_string}  = extractFieldsValues(requestObject);
+
+  console.log( "table: ", requestObject.db_table, "| fields:", fields_string, "| values:", values_string);
+
+  //querry composition
+  const sql = `SELECT ${fields_string} FROM ${requestObject.db_table}`;
+
+  console.log("sql query: ", sql);
+
+  query_db(sql, (result) => {
+    if (Object.keys(result).length == 0) {
+      console.log("error: create_module_error");
+      return null;
+    }
+
+    const rows = (result)=>{
+      var string = "";
+      var counter = 0;
+      result.forEach((row)=>{string += " | row: " + counter + " - content field: " + row.content;})
+      return string;
+    }
+
+    const result_message = "".concat( "Select with success:", rows(result) );
+
+    callback(result_message);
+  });
+};
 
 //UPDATE
+export const updateRequestModel = (req, callback) => {
+  
+  //Removes [Object: null prototype] prefix
+  const requestObject = JSON.parse( JSON.stringify( req.body ));
+
+  console.log( "req: ", requestObject );
+
+  //request data extraction
+  const {fields:fields_string, values:values_string}  = extractFieldsValues(requestObject);
+
+  console.log( "table: ", requestObject.db_table, "| fields:", fields_string, "| values:", values_string);
+
+  //querry composition
+  const sql = `UPDATE ${requestObject.db_table} SET ${fields_string} = ${values_string} WHERE  id = 1`;
+
+  console.log("sql query: ", sql);
+
+  query_db(sql, (result) => {
+    if (Object.keys(result).length == 0) {
+      console.log("error: create_module_error");
+      return null;
+    }
+
+    const result_message = "".concat(
+      "Updated first row with success:",
+      result
+    );
+
+    callback(result_message);
+  });
+};
 
 //DELETE
+export const deleteRequestModel = (req, callback) => {
 
+  //Removes [Object: null prototype] prefix
+  const requestObject = JSON.parse( JSON.stringify( req.body ));
+
+  console.log( "req: ", requestObject );
+
+  //request data extraction
+  const {fields:fields_string, values:values_string}  = extractFieldsValues(requestObject);
+
+  console.log( "table: ", requestObject.db_table, "| fields:", fields_string, "| values:", values_string);
+
+  //querry composition
+  const sql = `DELETE FROM ${requestObject.db_table} WHERE ${fields_string} = ${values_string}`;
+
+  console.log("sql query: ", sql);
+
+  query_db(sql, (result) => {
+    if (Object.keys(result).length == 0) {
+      console.log("error: create_module_error");
+      return null;
+    }
+
+    const result_message = "".concat(
+      "Deleted with success with id:",
+      result
+    );
+
+    callback(result_message);
+  });
+};
 
 //data extraction methods
 const extractFieldsValues = (requests) => {

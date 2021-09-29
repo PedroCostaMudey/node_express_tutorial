@@ -1,21 +1,28 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <title>CRUD FORM</title>
-  <link rel="stylesheet" href="style.css" type="text/css">
-</head>
-<body>
-  <div class='form-div'>
-    <h1>Form</h1>
-    <p>Please insert info into fields</p>
-    <form action='/requests' method='POST'>
-      <label>Table:<input class='input-field' type='text' name='db_table' value="requests" required maxlength="80" readonly></label>
-      <label>Field:<input class='input-field' type='text' name='db_field_1' value="content" required maxlength="80" readonly></label>
-      <label>Value:<input class='input-field' type='text' name='db_value_1' required maxlength="80" placeholder="insert value"></label>
-      <br>
-      <input class='submit-button' type="submit" value='Submit'>
-    </form>
-  </div>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>CRUD FORM</title>
+    <link rel="stylesheet" href="style.css" type="text/css" />
+    <script src="index.js"></script>
+  </head>
+  <body id="body" onload="load()">
+
+    <script>
+      //consts
+      const body_tag = document.getElementById("body");
+
+      //store
+      var uniqueElementId = 1;
+
+      var results = new Array();
+
+      //functions
+      const load = () => {
+        //functions call
+        placeForms();
+      };
+
+    </script>
+  </body>
 </html>

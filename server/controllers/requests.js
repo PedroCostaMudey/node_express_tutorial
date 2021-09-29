@@ -1,9 +1,8 @@
 import express from "express";
 
-import { createRequestModel } from "../models/resquests.js";
+import { createRequestModel, readRequestModel, updateRequestModel, deleteRequestModel } from "../models/resquests.js";
 
 export const createRequest = async (req, res) => {
-
   
   createRequestModel(req, (result) => {
     try {
@@ -13,8 +12,37 @@ export const createRequest = async (req, res) => {
     }
   });
 };
-export const readRequest = async (req, res) => {};
-export const updateRequest = async (req, res) => {};
-export const deleteRequest = async (req, res) => {};
+
+export const readRequest = async (req, res) => {
+
+  readRequestModel(req, (result) => {
+    try {
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+};
+
+export const updateRequest = async (req, res) => {
+
+  updateRequestModel(req, (result) => {
+    try {
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+};
+
+export const deleteRequest = async (req, res) => {
+  deleteRequestModel(req, (result) => {
+    try {
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+};
 
 export default null;
